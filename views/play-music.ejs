@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= username %> - <%= year %> Yılı Müziği</title>
+</head>
+<body>
+  <h1><%= username %> - <%= year %> Yılı Müziği</h1>
+  <audio controls>
+    <source src="data:audio/mp3;base64,<%= mp3Data %>" type="audio/mpeg">
+    Tarayıcınız audio elementini desteklemiyor.
+  </audio>
+</body>
+</html>
