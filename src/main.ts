@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { config } from 'dotenv';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+import { config } from 'dotenv';
 async function bootstrap() {
   config();
-  
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');
