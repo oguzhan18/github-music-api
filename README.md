@@ -1,104 +1,134 @@
 # GitHub Music API
 
-![Nest Logo](https://nestjs.com/img/logo-small.svg)
+A NestJS application that generates MP3 music from GitHub user contributions.  
+It fetches a user's GitHub contribution data via the GraphQL API, converts that data into audio samples (using sine waves), and finally streams or returns MP3 files to the client.
 
-## Description
+---
 
-GitHub Music API is a progressive Node.js framework built with NestJS that transforms GitHub commit history into music. This project allows users to generate music based on their contributions on GitHub, providing a unique way to visualize coding activity through sound.
+## Table of Contents
 
-## Features
+1. [Overview](#overview)
+2. [Prerequisites](#prerequisites)
+3. [Installation](#installation)
+4. [Environment Variables](#environment-variables)
+5. [Usage](#usage)
+6. [API Endpoints](#api-endpoints)
+7. [Project Structure](#project-structure)
+8. [Known Issues](#known-issues)
+9. [License](#license)
+10. [Contact](#contact)
 
-- Generate music from GitHub contributions.
-- Support for different instruments.
-- Customizable tempo and volume settings.
-- Stream music directly in the browser.
-- Generate music for specific years of contributions.
+---
+
+## Overview
+
+This project demonstrates how to create music based on a GitHub user's activity (commits, pull requests, etc.). It uses:
+
+- **NestJS** as the main application framework
+- **Axios** to call the GitHub GraphQL API
+- **fluent-ffmpeg** (with **ffmpeg-static**) to convert WAV files into MP3
+- **TypeScript** for type safety
+
+When you request a GitHub username, the application:
+
+1. Calls the GitHub GraphQL API to retrieve contribution data (daily commit counts).
+2. Maps these counts to sine wave frequencies.
+3. Renders audio samples in WAV format.
+4. Converts the WAV to MP3 using FFmpeg.
+5. Returns or streams the MP3 file in the response.
+
+---
+
+## Prerequisites
+
+1. **Node.js** (version 16 or higher recommended).
+2. **npm** or **yarn** as a package manager.
+3. **FFmpeg** is **not** required separately—this project bundles **ffmpeg-static**, so it should work out of the box.
+4. A valid **GitHub Token** with at least `read:user` or basic scope to access public contribution data.
+
+---
 
 ## Installation
 
-To get started with the GitHub Music API, follow these steps:
-
-1. Clone the repository:
+1. **Clone** the repository:
    ```bash
-   git clone https://github.com/yourusername/github-music-api.git
+   git clone https://github.com/oguzhan18/github-music-api
    cd github-music-api
-   ```
-
-2. Install the dependencies:
+    ```
+2. **Install** dependencies:
    ```bash
-   npm install
+    npm install
+    # or
+    yarn install
    ```
+3. **Build** the project:
+   ```bash
+    npm run build
+    # or
+    yarn build
+    ```
+4. **Run** the project:
+    ```bash
+    npm run start
+    # or
+    yarn start
+    ```
+5. **For development** with auto-reload:
+    ```bash
+    npm run start:dev
+    # or
+    yarn start:dev
+    ```
+## Environment Variables
+Create a file named `.env` (or set the variables in your environment) and add:
+```makefile
+GITHUB_TOKEN=your_personal_access_token
+```
+## Usage
+1.**Run the server** (in production or development mode).
+2.**Send a request** to one of the defined endpoints (e.g., ``GET /github/music?username=octocat``).
 
-3. Set up your environment variables. Create a `.env` file in the root directory and add your GitHub token:
-   ```plaintext
-   GITHUB_TOKEN=your_github_token
-   ```
+3.**The application will**:
+ * Fetch the GitHub user's contribution data.
+    * Generate a WAV file based on the contribution data.
+    * Convert the WAV file to MP3.
 
-## Running the App
-
-To run the application, use the following commands:
-
-- For development mode:
-  ```bash
-  npm run start:dev
-  ```
-
-- For production mode:
-  ```bash
-  npm run start:prod
-  ```
-
+---
 ## API Endpoints
+All endpoints are under the ``/github`` route. For example: ``http://localhost:3000/github/music``.
+1.  GET ``/github/music?username=USERNAME``
+   * Required query param: username
+   * Fetches all contributions for the user and returns an MP3 file
+2. GET ``/github/music/custom?username=USERNAME&instrumentId=1&tempo=120&volume=0.5``
+    * Required: username, instrumentId
+    * Optional: tempo, volume
+    * Fetches all contributions for the user and returns an MP3 file
+3. GET ``/github/music/stream?username=USERNAME``
+   * Returns a JSON list of all the years in which the user has contributions.
+---
+## Project Structure
+```bash
+├── src
+│   ├── github
+│   │   ├── github.controller.ts   # NestJS controller defining the routes
+│   │   ├── github.service.ts      # Main service with logic for fetching data and generating music
+│   │   └── ...
+│   ├── app.module.ts              # Main application module
+│   └── main.ts                    # Entry point (NestFactory)
+├── temp                           # A directory created at runtime for WAV/MP3 files
+├── .env                           # Environment variables file (not committed)
+├── package.json
+├── tsconfig.json
+└── README.md                      # This document
+```
+---
+## Known Issues
+- **Audio quality** can be improved by using a higher sample rate (e.g., 44100 Hz).
+- **Performance** can be improved by caching the generated MP3 files.
+- **Error handling** can be improved by adding more checks and logging.
+- **Security** can be improved by validating user input and using HTTPS.
+- **Testing** is missing in this project. It's recommended to add unit and integration tests.
+- **Documentation** can be improved by adding more comments and explanations.
+- **Code quality** can be improved by following best practices and design patterns.
 
-### Generate Music
 
-- **Endpoint:** `GET /github/music`
-- **Query Parameters:**
-  - `username`: GitHub username (required)
-- **Response:** Returns an MP3 file generated from the user's contributions.
-
-### Generate Custom Music
-
-- **Endpoint:** `GET /github/music/custom`
-- **Query Parameters:**
-  - `username`: GitHub username (required)
-  - `instrumentId`: Instrument ID (1: Piano, 2: Flute, 3: Guitar, 4: Violin, 5: Clarinet, 6: Drums, 7: Baglama, 8: Violin Vibrato) (required)
-  - `tempo`: Tempo in BPM (optional, default: 120)
-  - `volume`: Volume level (0.0 - 1.0) (optional, default: 0.5)
-- **Response:** Returns an MP3 file generated with custom settings.
-
-### Stream Music
-
-- **Endpoint:** `GET /github/music/stream`
-- **Query Parameters:**
-  - `username`: GitHub username (required)
-- **Response:** Streams the generated MP3 file directly in the browser.
-
-### Generate Music by Year
-
-- **Endpoint:** `GET /github/music/year`
-- **Query Parameters:**
-  - `username`: GitHub username (required)
-  - `year`: Selected year (optional)
-- **Response:** Returns an HTML page with the music generated for the selected year.
-
-### Get User Years
-
-- **Endpoint:** `GET /github/years`
-- **Query Parameters:**
-  - `username`: GitHub username (required)
-- **Response:** Returns a JSON object with the years the user has contributions.
-
-## Support
-
-This project is open-source and licensed under the MIT License. Contributions are welcome! If you would like to support the project, please consider becoming a backer or sponsor.
-
-## Stay in Touch
-
-- **Author:** [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- **Website:** [nestjs.com](https://nestjs.com/)
-- **Twitter:** [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

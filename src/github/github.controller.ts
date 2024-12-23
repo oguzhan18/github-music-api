@@ -1,5 +1,3 @@
-// github/github.controller.ts
-
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import {
   ApiQuery,
@@ -34,7 +32,6 @@ export class GithubController {
     await this.githubService.generateAndSendMusic(username, res, false);
   }
 
-  // Yeni endpoint: Özel müzik oluşturma
   @Get('music/custom')
   @ApiQuery({
     name: 'username',
@@ -64,11 +61,11 @@ export class GithubController {
     content: { 'audio/mpeg': {} },
   })
   async getCustomMusic(
+    @Res() res: Response,
     @Query('username') username: string,
     @Query('instrumentId') instrumentId: number,
-    @Query('tempo') tempo: number,
-    @Query('volume') volume: number,
-    @Res() res: Response,
+    @Query('tempo') tempo?: number,
+    @Query('volume') volume?: number,
   ) {
     await this.githubService.generateCustomMusic(
       username,
@@ -107,7 +104,7 @@ export class GithubController {
   @ApiQuery({
     name: 'year',
     required: false,
-    description: 'Seçilen yıl',
+    description: 'Seçilen yıl (örneğin: 2023)',
   })
   @ApiResponse({
     status: 200,
@@ -116,14 +113,13 @@ export class GithubController {
     content: { 'text/html': {} },
   })
   async getMusicByYear(
-    @Query('username') username: string,
-    @Query('year') year: string,
     @Res() res: Response,
+    @Query('username') username: string,
+    @Query('year') year?: string,
   ) {
     await this.githubService.generateMusicByYear(username, year, res);
   }
 
-  // Yeni endpoint: Kullanıcı adı girildiğinde yılları döndürür
   @Get('years')
   @ApiQuery({
     name: 'username',
