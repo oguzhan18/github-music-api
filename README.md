@@ -52,7 +52,7 @@ When you request a GitHub username, the application:
 
 1. **Clone** the repository:
    ```bash
-   git clone https://github.com/oguzhan18/github-music-api
+   git clone https://github.com/oguzhan18/github-music-api.git
    cd github-music-api
     ```
 2. **Install** dependencies:
