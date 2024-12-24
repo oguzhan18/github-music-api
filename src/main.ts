@@ -12,8 +12,8 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('GitHub Müzik API')
-    .setDescription('GitHub commit geçmişini müziğe çevirir')
+    .setTitle('GitHub Music API')
+    .setDescription('GitHub turns commit history into music')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
