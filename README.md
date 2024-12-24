@@ -15,9 +15,6 @@ It fetches a user's GitHub contribution data via the GraphQL API, converts that 
 6. [API Endpoints](#api-endpoints)
 7. [Project Structure](#project-structure)
 8. [Known Issues](#known-issues)
-9. [License](#license)
-10. [Contact](#contact)
-
 ---
 
 ## Overview
